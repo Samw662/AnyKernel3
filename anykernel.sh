@@ -2,7 +2,7 @@
 # osm0sis @ xda-developers
 
 properties() { '
-kernel.string=—WearyStars-R1+
+kernel.string=—WearyStars⭐-Sunlight
 do.devicecheck=1
 do.modules=1
 do.systemless=0
