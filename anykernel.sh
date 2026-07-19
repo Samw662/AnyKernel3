@@ -4,7 +4,7 @@
 properties() { '
 kernel.string=—WearyStars⭐-Sunlight
 do.devicecheck=1
-do.modules=1
+do.modules=0
 do.systemless=0
 do.cleanup=1
 do.cleanuponabort=0
@@ -25,7 +25,3 @@ set_perm_recursive 0 0 750 750 $ramdisk/init* $ramdisk/sbin;
 
 dump_boot;
 write_boot;
-
-reset_ak;
-split_boot;
-flash_boot;
