@@ -4,7 +4,7 @@
 properties() { '
 kernel.string=WearyKernel
 do.devicecheck=1
-do.modules=1
+do.modules=0
 do.systemless=0
 do.cleanup=1
 do.cleanuponabort=0
