@@ -4,12 +4,12 @@
 properties() { '
 kernel.string=WearyKernel
 do.devicecheck=1
-do.modules=0
+do.modules=1
 do.systemless=0
 do.cleanup=1
 do.cleanuponabort=0
-device.name1=tundra
-supported.versions=14.0 - 15.0
+device.name1=xpeng
+supported.versions=14.0 - 17.0
 supported.patchlevels=
 '; }
 
