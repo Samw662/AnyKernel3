@@ -3,7 +3,7 @@
 set -e
 
 # Set correct path
-export PATH="$(realpath ../../../clang-r563880c/bin):$PATH"
+export PATH="$(realpath ../../clang-r563880c/bin):$PATH"
 
 which clang
 clang --version
@@ -77,9 +77,6 @@ make_anykernel() {
     cp -f \
       "modules/vendor/lib/modules/wlan.ko" \
       "modules/vendor/lib/modules/qca_cld3_wlan.ko"
-  else
-    echo "ERROR: wlan.ko not found!"
-    exit 1
   fi
 
   find modules -name "*.ko" -exec llvm-strip --strip-unneeded -g {} \;
