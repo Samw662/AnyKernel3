@@ -474,7 +474,6 @@ do_modules() {
     fi;
   else
     cd $AKHOME/modules;
-    ui_print " " "Pushing modules...";
     if [ -d /dev/block/mapper ]; then
       for block in system vendor product; do
         for slot in "" _a _b; do
@@ -489,15 +488,21 @@ do_modules() {
         fi;
       done;
     fi;
-    for module in $(find . -name '*.ko'); do
+    if [ -f "$AKHOME/resize_vendor.sh" ]; then
+    ( . "$AKHOME/resize_vendor.sh" )
+    RC=$?
+    [ "$RC" -eq 0 ] || true
+    fi;
+    ui_print " " "Cleaning old modules...";
+    rm -f /vendor/lib/modules/*.ko /vendor/lib/modules/modules.* 2>/dev/null;
+    ui_print " " "Pushing new modules...";
+    for module in $(find . \( -name '*.ko' -o -name 'modules.*' \)); do
       modtarget=$POSTINSTALL$(echo $module | cut -c2-);
-      if [ ! -e $modtarget ]; then
-        case $module in
-          */vendor/*) modcon=vendor;;
-          */product/*) modcon=product;;
-          *) modcon=system;;
-        esac;
-      fi;
+      case $module in
+        */vendor/*) modcon=vendor;;
+        */product/*) modcon=product;;
+        *) modcon=system;;
+      esac;
       if is_mounted $modtarget; then
         mount -o rw,remount -t auto $modtarget && echo "$modtarget (rw)" >&2;
       fi;

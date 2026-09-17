@@ -20,6 +20,9 @@ for f in modules.alias modules.dep modules.softdep; do
     [ -f "$SRC/$f" ] && cp "$SRC/$f" "$DST/"
 done
 
+# modules.blocklist from no-load.txt
+[ -f no-load.txt ] && cp -f no-load.txt "$DST/modules.blocklist"
+
 # Rewrite modules.dep
 tmp="$DST/modules.dep.tmp"
 > "$tmp"
@@ -71,19 +74,25 @@ if [ ! -f "$RECOVERY_LIST" ]; then
     exit 1
 fi
 
+# Lista dei moduli effettivamente presenti come .ko (SRC o DST)
+RECOVERY_PRESENT="$(mktemp)"
+
 while IFS= read -r mod; do
     [ -z "$mod" ] && continue
 
     if [ -f "$SRC/$mod" ]; then
         cp -f "$SRC/$mod" "$VENDOR_RAMDISK_DIR/"
         echo "  [SRC] $mod"
+        echo "$mod" >> "$RECOVERY_PRESENT"
     elif [ -f "$DST/$mod" ]; then
         cp -f "$DST/$mod" "$VENDOR_RAMDISK_DIR/"
         echo "  [DST] $mod"
+        echo "$mod" >> "$RECOVERY_PRESENT"
     else
-        echo "  WARN: $mod non trovato in SRC né in DST"
+        echo "  SKIP: $mod (not found .ko)"
     fi
 done < "$RECOVERY_LIST"
+
 echo ""
 echo ">>> Generazione metadata per $VENDOR_RAMDISK_DIR ..."
 
@@ -94,7 +103,7 @@ RECOVERY_BASENAMES="$(mktemp)"
 while IFS= read -r mod; do
     [ -z "$mod" ] && continue
     echo "${mod%.ko}"
-done < "$RECOVERY_LIST" > "$RECOVERY_BASENAMES"
+done < "$RECOVERY_PRESENT" > "$RECOVERY_BASENAMES"
 
 # --- modules.load (VUOTO) ---
 : > "$VENDOR_RAMDISK_DIR/modules.load"
@@ -105,7 +114,7 @@ done < "$RECOVERY_LIST" > "$RECOVERY_BASENAMES"
 while IFS= read -r mod; do
     [ -z "$mod" ] && continue
     echo "$mod" >> "$VENDOR_RAMDISK_DIR/modules.load.recovery"
-done < "$RECOVERY_LIST"
+done < "$RECOVERY_PRESENT"
 
 # --- modules.dep (modules.load.recovery order, path /lib/modules/) ---
 : > "$VENDOR_RAMDISK_DIR/modules.dep"
@@ -131,7 +140,7 @@ while IFS= read -r mod; do
     else
         echo "  WARN: nessuna riga per $mod nel vendor modules.dep"
     fi
-done < "$RECOVERY_LIST"
+done < "$RECOVERY_PRESENT"
 
 # --- modules.alias (stripped, with header) ---
 : > "$VENDOR_RAMDISK_DIR/modules.alias"
@@ -165,7 +174,7 @@ if [ -f "$DST/modules.softdep" ]; then
     done < "$DST/modules.softdep"
 fi
 
-rm -f "$RECOVERY_BASENAMES"
+rm -f "$RECOVERY_BASENAMES" "$RECOVERY_PRESENT"
 
 echo ""
 echo ">>> Contenuto $VENDOR_RAMDISK_DIR:"

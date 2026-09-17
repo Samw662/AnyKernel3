@@ -34,6 +34,10 @@ export KCFLAGS="-Wno-incompatible-function-pointer-types"
 # This is required, audio will not work otherwise
 export TARGET_PRODUCT=bangkk
 
+if [ "$BUILD" = 1 ]; then
+  rm -rf "${OUT}"
+fi
+
 configure() {
   make "${BUILD_OPTIONS[@]}" \
         vendor/holi-qgki_defconfig \
@@ -56,7 +60,7 @@ modules_install() {
 
 
 make_anykernel() {
-  rm -rf {Image,dtb,dtb.img,dtbo.img,modules/vendor/lib/modules,modules/system/lib/modules}
+  rm -rf {Image,Image.gz,Image.gz-dtb,dtb,dtb.img,dtbo.img,modules,vendor_ramdisk}
 
   mkdir -p modules/{system,vendor}/lib/modules
 
@@ -67,17 +71,6 @@ make_anykernel() {
 #  cp "${OUT}/arch/arm64/boot/dts/vendor/qcom/blair-moto-bangkk-base.dtb" dtb
 
   ./place-modules.sh "${OUT}/modules_install/lib/modules"/* modules/vendor/lib/modules "/vendor/lib/modules"
-
-  # Stock OS expects the Wi-Fi driver as:
-  # qca_cld3_wlan.ko
-  # AOSP expects the Wi-Fi driver as:
-  # wlan.ko
-  if [ -f "modules/vendor/lib/modules/wlan.ko" ]; then
-    echo "Creating qca_cld3_wlan.ko ..."
-    cp -f \
-      "modules/vendor/lib/modules/wlan.ko" \
-      "modules/vendor/lib/modules/qca_cld3_wlan.ko"
-  fi
 
   find modules -name "*.ko" -exec llvm-strip --strip-unneeded -g {} \;
 
