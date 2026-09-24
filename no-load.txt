@@ -1,0 +1,2 @@
+# Modules to not load automatically
+# Add module names (without .ko extension) here to prevent auto-loading

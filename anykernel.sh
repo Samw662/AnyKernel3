@@ -19,9 +19,6 @@ ramdisk_compression=auto;
 patch_vbmeta_flag=auto;
 
 . tools/ak3-core.sh;
-( . $home/resize_vendor.sh )
-
-sleep 2
 
 set_perm_recursive 0 0 755 644 $ramdisk/*;
 set_perm_recursive 0 0 750 750 $ramdisk/init* $ramdisk/sbin;
