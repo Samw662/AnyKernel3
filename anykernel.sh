@@ -4,14 +4,15 @@
 ### AnyKernel setup
 # global properties
 properties() { '
-kernel.string=Motorola Moto SM-6375
+kernel.string=—WearyStars⭐-Sunlight
 do.devicecheck=1
 do.modules=1
 do.systemless=0
 do.cleanup=1
 do.cleanuponabort=0
-device.name1=fogos
-device.name2=bangkk
+device.name1=bangkk
+supported.versions=14.0 - 17.0
+supported.patchlevels=
 '; } # end properties
 
 ### AnyKernel install
