@@ -11,6 +11,8 @@ do.systemless=0
 do.cleanup=1
 do.cleanuponabort=0
 device.name1=bangkk
+device.name2=xpeng
+device.name3=tundra
 supported.versions=14.0 - 17.0
 supported.patchlevels=
 '; } # end properties
